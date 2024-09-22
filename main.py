@@ -1,6 +1,5 @@
 import typer
 import requests
-import json
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -59,7 +58,14 @@ def search_games(query):
     try:
         response = requests.post(HLTB_API_URL, headers=headers, json=data)
         response.raise_for_status()
-        return response.json()['data']
+        games = response.json()['data']
+        
+        # Pre-fetch detailed data for the first 3 games
+        for i in range(min(3, len(games))):
+            game_details = get_game_details(games[i]['game_id'])
+            games[i]['release_year'] = game_details.get('release_world', 'N/A')[:4]  # Get just the year
+        
+        return games
     except RequestException as e:
         console.print(f"[bold red]Error accessing HowLongToBeat API: {str(e)}[/bold red]")
         return []
@@ -82,26 +88,41 @@ def get_steam_reviews(app_id):
     response = requests.get(url)
     return response.json()
 
-def display_game_choices(games):
+def display_search_results(games):
     table = Table(title="Search Results")
-    table.add_column("Number", style="cyan")
+    table.add_column("#", style="cyan", no_wrap=True)
     table.add_column("Title", style="magenta")
     table.add_column("Type", style="yellow")
     table.add_column("Main Story", style="green")
-    table.add_column("Main + Extra", style="blue")
-    table.add_column("Completionist", style="red")
-    
-    for i, game in enumerate(games, 1):
+    table.add_column("User Score", style="blue")
+    table.add_column("Release Year", style="white")
+
+    for i, game in enumerate(games[:10], 1):  # Limit to 10 games
+        score = game['review_score']
+        score_color = "green" if score >= 80 else "yellow" if score >= 60 else "red"
+        release_year = game.get('release_year', 'N/A')
         table.add_row(
             str(i),
             game['game_name'],
             game['game_type'],
             f"{game['comp_main'] // 3600} hours",
-            f"{game['comp_plus'] // 3600} hours",
-            f"{game['comp_100'] // 3600} hours"
+            f"[{score_color}]{score}%[/{score_color}]",
+            release_year
         )
-    
+
     console.print(table)
+
+
+def get_user_choice(max_choice):
+    while True:
+        choice = console.input("\nEnter the number of the game you want details for, 'n' to search again, or 'q' to quit: ")
+        if choice.lower() == 'q':
+            return 'quit'
+        if choice.lower() == 'n':
+            return 'new_search'
+        if choice.isdigit() and 1 <= int(choice) <= max_choice:
+            return int(choice)
+        console.print("[bold red]Invalid choice. Please try again.[/bold red]")
 
 def format_game_details(game, steam_reviews):
     details = f"""
@@ -132,25 +153,36 @@ Recent Steam Reviews:
 
 @app.command()
 def lookup(game_name: str):
-    console.print(f"[bold blue]Searching for: {game_name}[/bold blue]")
-    games = search_games(game_name)
-    
-    if not games:
-        console.print("[bold red]No games found or there was an error in the search.[/bold red]")
-        return
-    
-    display_game_choices(games)
-    
-    choice = typer.prompt("Enter the number of the game you want details for", type=int)
-    if 1 <= choice <= len(games):
+    while True:
+        console.print(f"\n[bold blue]Searching for: {game_name}[/bold blue]")
+        games = search_games(game_name)
+
+        if not games:
+            console.print("[bold red]No games found.[/bold red]")
+            if console.input("Press 'n' to search again or any other key to quit: ").lower() != 'n':
+                break
+            game_name = console.input("Enter a new game name to search: ")
+            continue
+
+        display_search_results(games)
+
+        choice = get_user_choice(min(len(games), 10))
+        if choice == 'quit':
+            break
+        elif choice == 'new_search':
+            game_name = console.input("Enter a new game name to search: ")
+            continue
+
         selected_game = games[choice - 1]
         game_details = get_game_details(selected_game['game_id'])
         steam_app_id = game_details['profile_steam']
         steam_reviews = get_steam_reviews(steam_app_id)
         details = format_game_details(game_details, steam_reviews)
         console.print(Panel(details, title=f"Details for {selected_game['game_name']}", expand=False))
-    else:
-        console.print("[bold red]Invalid choice.[/bold red]")
+
+        if console.input("\nPress 'n' to search again or any other key to return to the main menu: ").lower() != 'n':
+            continue
+        game_name = console.input("Enter a new game name to search: ")
 
 if __name__ == "__main__":
     app()
