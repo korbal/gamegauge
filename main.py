@@ -3,7 +3,9 @@ import requests
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
+from rich.text import Text
 from requests.exceptions import RequestException
+from datetime import datetime
 
 app = typer.Typer()
 console = Console()
@@ -112,7 +114,6 @@ def display_search_results(games):
 
     console.print(table)
 
-
 def get_user_choice(max_choice):
     while True:
         choice = console.input("\nEnter the number of the game you want details for, 'n' to search again, or 'q' to quit: ")
@@ -132,7 +133,7 @@ Main Story: {game['comp_main'] // 3600} hours
 Main + Extra: {game['comp_plus'] // 3600} hours
 Completionist: {game['comp_100'] // 3600} hours
 User Score: {game['review_score']}%
-Release Year: {game['release_world']}
+Release Year: {game['release_world'][:4]}
 Developer: {game['profile_dev']}
 Publisher: {game['profile_pub']}
 Platforms: {game['profile_platform']}
@@ -144,12 +145,51 @@ Positive Reviews: {steam_reviews['query_summary']['total_positive']}
 Negative Reviews: {steam_reviews['query_summary']['total_negative']}
 Review Score: {steam_reviews['query_summary']['review_score']}
 
-Recent Steam Reviews:
+Press 'r' to read reviews.
+Press any other key to return to the main menu.
 """
-    for review in steam_reviews['reviews'][:5]:
-        details += f"\n{review['review']}\n"
-
     return details
+
+
+
+def display_reviews(steam_reviews):
+    reviews = steam_reviews['reviews']
+    total_reviews = len(reviews)
+    current_index = 0
+
+    while True:
+        review = reviews[current_index]
+        review_date = datetime.fromtimestamp(review['timestamp_created']).strftime('%Y-%m-%d')
+        
+        review_text = Text.assemble(
+            (f"Review {current_index + 1} of {total_reviews}\n", "bold"),
+            f"Reviewer: {review['author']['steamid']} | Date: {review_date}\n\n",
+            review['review']
+        )
+
+        console.print(Panel(review_text, expand=False))
+
+        console.print("\nNavigation:")
+        if current_index > 0:
+            console.print("  [p] Previous review")
+        if current_index < total_reviews - 1:
+            console.print("  [n] Next review")
+        console.print("  [q] Quit review mode")
+        
+        choice = console.input("\nEnter your choice: ").lower()
+
+        if choice == 'p' and current_index > 0:
+            current_index -= 1
+        elif choice == 'n' and current_index < total_reviews - 1:
+            current_index += 1
+        elif choice == 'q':
+            break
+        else:
+            console.print("[bold red]Invalid choice. Please try again.[/bold red]")
+
+        console.clear()
+
+
 
 @app.command()
 def lookup(game_name: str):
@@ -177,12 +217,22 @@ def lookup(game_name: str):
         game_details = get_game_details(selected_game['game_id'])
         steam_app_id = game_details['profile_steam']
         steam_reviews = get_steam_reviews(steam_app_id)
-        details = format_game_details(game_details, steam_reviews)
-        console.print(Panel(details, title=f"Details for {selected_game['game_name']}", expand=False))
+        
+        while True:
+            details = format_game_details(game_details, steam_reviews)
+            console.print(Panel(details, title=f"Details for {selected_game['game_name']}", expand=False))
 
-        if console.input("\nPress 'n' to search again or any other key to return to the main menu: ").lower() != 'n':
-            continue
+            more_choice = console.input("\nEnter your choice: ").lower()
+            if more_choice == 'r':
+                display_reviews(steam_reviews)
+            else:
+                break
+
+        if console.input("\nPress 'n' to search for another game or any other key to quit: ").lower() != 'n':
+            break
         game_name = console.input("Enter a new game name to search: ")
+
+
 
 if __name__ == "__main__":
     app()
