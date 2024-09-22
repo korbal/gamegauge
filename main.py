@@ -6,6 +6,7 @@ from rich.panel import Panel
 from rich.text import Text
 from requests.exceptions import RequestException
 from datetime import datetime
+import shutil
 
 app = typer.Typer()
 console = Console()
@@ -13,6 +14,9 @@ console = Console()
 HLTB_API_URL = "https://howlongtobeat.com/api/search/21fda17e4a1d49be"
 HLTB_GAME_URL = "https://howlongtobeat.com/_next/data/bjO-XdO0-1kFVCUKWjVm0/game/{}.json?gameId={}"
 STEAM_REVIEW_URL = "https://store.steampowered.com/appreviews/{}?json=1"
+
+# Get console width
+CONSOLE_WIDTH = shutil.get_terminal_size().columns
 
 def search_games(query):
     headers = {
@@ -90,8 +94,9 @@ def get_steam_reviews(app_id):
     response = requests.get(url)
     return response.json()
 
+
 def display_search_results(games):
-    table = Table(title="Search Results")
+    table = Table(title="Search Results", width=CONSOLE_WIDTH)
     table.add_column("#", style="cyan", no_wrap=True)
     table.add_column("Title", style="magenta")
     table.add_column("Type", style="yellow")
@@ -114,16 +119,6 @@ def display_search_results(games):
 
     console.print(table)
 
-def get_user_choice(max_choice):
-    while True:
-        choice = console.input("\nEnter the number of the game you want details for, 'n' to search again, or 'q' to quit: ")
-        if choice.lower() == 'q':
-            return 'quit'
-        if choice.lower() == 'n':
-            return 'new_search'
-        if choice.isdigit() and 1 <= int(choice) <= max_choice:
-            return int(choice)
-        console.print("[bold red]Invalid choice. Please try again.[/bold red]")
 
 def format_game_details(game, steam_reviews):
     details = f"""
@@ -144,12 +139,34 @@ Total Reviews: {steam_reviews['query_summary']['total_reviews']}
 Positive Reviews: {steam_reviews['query_summary']['total_positive']}
 Negative Reviews: {steam_reviews['query_summary']['total_negative']}
 Review Score: {steam_reviews['query_summary']['review_score']}
-
-Press 'r' to read reviews.
-Press any other key to return to the main menu.
 """
     return details
 
+
+def display_instructions(current_screen):
+    common_instructions = [
+        "• 's' to start a new search",
+        "• 'q' to quit the application"
+    ]
+    
+    screen_specific_instructions = {
+        "search_results": ["• Enter a number to select a game"],
+        "game_details": ["• 'r' to read reviews"],
+        "review_navigation": [
+            "• 'p' for previous review",
+            "• 'n' for next review",
+            "• 'b' to go back to game details"
+        ]
+    }
+    
+    all_instructions = screen_specific_instructions.get(current_screen, []) + common_instructions
+    
+    console.print(Panel(
+        "\n".join(all_instructions),
+        title="Instructions",
+        expand=False,
+        width=CONSOLE_WIDTH
+    ))
 
 
 def display_reviews(steam_reviews):
@@ -167,29 +184,25 @@ def display_reviews(steam_reviews):
             review['review']
         )
 
-        console.print(Panel(review_text, expand=False))
-
-        console.print("\nNavigation:")
-        if current_index > 0:
-            console.print("  [p] Previous review")
-        if current_index < total_reviews - 1:
-            console.print("  [n] Next review")
-        console.print("  [q] Quit review mode")
+        console.print(Panel(review_text, expand=False, width=CONSOLE_WIDTH))
+        display_instructions("review_navigation")
         
-        choice = console.input("\nEnter your choice: ").lower()
+        choice = console.input("Enter your choice: ").lower()
 
         if choice == 'p' and current_index > 0:
             current_index -= 1
         elif choice == 'n' and current_index < total_reviews - 1:
             current_index += 1
-        elif choice == 'q':
+        elif choice == 'b':
             break
+        elif choice == 's':
+            return 'new_search'
+        elif choice == 'q':
+            return 'quit'
         else:
             console.print("[bold red]Invalid choice. Please try again.[/bold red]")
 
         console.clear()
-
-
 
 @app.command()
 def lookup(game_name: str):
@@ -199,40 +212,54 @@ def lookup(game_name: str):
 
         if not games:
             console.print("[bold red]No games found.[/bold red]")
-            if console.input("Press 'n' to search again or any other key to quit: ").lower() != 'n':
+            display_instructions("search_results")
+            choice = console.input("Enter your choice: ").lower()
+            if choice == 's':
+                game_name = console.input("Enter a new game name to search: ")
+                continue
+            elif choice == 'q':
                 break
-            game_name = console.input("Enter a new game name to search: ")
-            continue
+            else:
+                console.print("[bold red]Invalid choice.[/bold red]")
+                continue
 
         display_search_results(games)
+        display_instructions("search_results")
 
-        choice = get_user_choice(min(len(games), 10))
-        if choice == 'quit':
+        choice = console.input("Enter your choice: ").lower()
+        if choice == 'q':
             break
-        elif choice == 'new_search':
+        elif choice == 's':
             game_name = console.input("Enter a new game name to search: ")
             continue
+        elif choice.isdigit() and 1 <= int(choice) <= len(games):
+            selected_game = games[int(choice) - 1]
+            game_details = get_game_details(selected_game['game_id'])
+            steam_app_id = game_details['profile_steam']
+            steam_reviews = get_steam_reviews(steam_app_id)
+            
+            while True:
+                details = format_game_details(game_details, steam_reviews)
+                console.print(Panel(details, title=f"Details for {selected_game['game_name']}", expand=False, width=CONSOLE_WIDTH))
+                display_instructions("game_details")
 
-        selected_game = games[choice - 1]
-        game_details = get_game_details(selected_game['game_id'])
-        steam_app_id = game_details['profile_steam']
-        steam_reviews = get_steam_reviews(steam_app_id)
-        
-        while True:
-            details = format_game_details(game_details, steam_reviews)
-            console.print(Panel(details, title=f"Details for {selected_game['game_name']}", expand=False))
-
-            more_choice = console.input("\nEnter your choice: ").lower()
-            if more_choice == 'r':
-                display_reviews(steam_reviews)
-            else:
-                break
-
-        if console.input("\nPress 'n' to search for another game or any other key to quit: ").lower() != 'n':
-            break
-        game_name = console.input("Enter a new game name to search: ")
-
-
+                choice = console.input("Enter your choice: ").lower()
+                if choice == 'r':
+                    review_choice = display_reviews(steam_reviews)
+                    if review_choice == 'new_search':
+                        game_name = console.input("Enter a new game name to search: ")
+                        break
+                    elif review_choice == 'quit':
+                        return
+                elif choice == 's':
+                    game_name = console.input("Enter a new game name to search: ")
+                    break
+                elif choice == 'q':
+                    return
+                else:
+                    console.print("[bold red]Invalid choice.[/bold red]")
+        else:
+            console.print("[bold red]Invalid choice.[/bold red]")
 
 if __name__ == "__main__":
     app()
