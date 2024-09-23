@@ -3,7 +3,7 @@
 A command-line tool designed to help gamers make informed purchase decisions.
 It aggregates data from multiple sources, providing key information about games such as playtime, user scores, and reviews, all in one convenient interface.
 
-### About GameGauge:
+### About GameGauge
 
 GameGauge was born out of a simple need: to make informed gaming purchase decisions quickly and efficiently. As a gamer myself, I often found the process of researching games time-consuming and scattered across multiple websites. I created GameGauge to consolidate this information into a single, easy-to-use command-line tool.
 
@@ -20,11 +20,10 @@ This release (v1.0) is just the beginning. I have plans to expand and refine Gam
 
 ### Installation
 
-To install GameGauge, follow these steps:
-
 1. Ensure you have Python 3.7 or higher installed on your system.
-2. Just use this one stop install script
-   ```curl
+2. Run the following one-stop install script:
+
+```bash
 curl -sSL https://raw.githubusercontent.com/korbal/gamegauge/main/install.sh | bash
 ```
 
@@ -47,17 +46,17 @@ Upon running GameGauge, you'll be presented with a list of search results. You c
 * Playtime estimates (main story, completionist, etc.)
 * User scores
 * Recent user reviews
-* Release date and platform availability (for performance reasons, only the first 3 (most relevant) games' release date are displayed. To be improved later.)
+* Release date and platform availability (for performance reasons, only the first 3 most relevant games' release dates are displayed.)
 
 The interface is designed to be intuitive and easy to navigate, with clear instructions provided at each step.
 
 ### Feedback and Support
 
-If you encounter any issues or have suggestions for improving GameGauge, please don't hesitate to open an issue on our GitHub repository. We value your feedback and are committed to making GameGauge as useful as possible for the gaming community.
+If you encounter any issues or have suggestions for improving GameGauge, please don't hesitate to open an issue on our GitHub repository.
 
 ### License
 
-GameGauge is released under the MIT License. 
+GameGauge is released under the MIT License.
 
 ### Acknowledgements
 
