@@ -18,6 +18,13 @@ This release (v1.0) is just the beginning. I have plans to expand and refine Gam
 * Access to recent user reviews
 * Simple, intuitive command-line interface
 
+## UX
+![image](https://github.com/user-attachments/assets/e4ee7548-5575-4c99-9f72-db5ea877304e)
+![image](https://github.com/user-attachments/assets/c5cb713d-2ebd-47d8-b596-cf4bf1966712)
+![image](https://github.com/user-attachments/assets/88ac6abd-78d5-4b3d-a7c9-e4578086b87e)
+
+
+
 ### Installation
 
 1. Ensure you have Python 3.7 or higher installed on your system.
