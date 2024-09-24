@@ -27,14 +27,53 @@ This release (v1.0) is just the beginning. I have plans to expand and refine Gam
 
 ### Installation
 
-1. Ensure you have Python 3.7 or higher installed on your system.
-2. Run the following one-stop install script:
 
+
+I've created a one-stop installation script for GameGauge, but I strongly encourage you to review the script before running it.
+
+### Safe Installation Steps
+
+To ensure a safe and successful installation, please follow these steps:
+
+#### 1. Download the Script
 ```bash
-curl -sSL https://raw.githubusercontent.com/korbal/gamegauge/master/install.sh | bash
+curl -O https://raw.githubusercontent.com/korbal/gamegauge/master/install.sh
 ```
 
-The installation script will set up a virtual environment, install all necessary dependencies, and make the 'gamegauge' command globally accessible.
+#### 2. Review the Script's Contents
+```bash
+cat install.sh
+```
+Take a moment to read through the script and understand what it will do on your system.
+
+#### 3. Make the Script Executable
+```bash
+chmod +x install.sh
+```
+
+#### 4. Run the Installation Script
+```bash
+./install.sh
+```
+This script will:
+
+* Detect your package manager and shell
+* Install necessary dependencies (python3-venv and pip3 if not present)
+* Create a virtual environment
+* Install GameGauge and its dependencies
+* Make the 'gamegauge' command globally accessible
+
+If the script runs successfully, you should be able to start GameGauge by typing:
+
+```bash
+gamegauge
+```
+
+### Troubleshooting
+
+If you encounter any issues during installation, please check that you have Python 3 installed on your system. You may need to install additional dependencies manually depending on your system configuration.
+
+Remember, while I've tried to make this script as universal as possible, it may not work perfectly on all systems. If you encounter any problems, please open an issue on the GitHub repository, and I'll do my best to help.
 
 ### Usage
 
