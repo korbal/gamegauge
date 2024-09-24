@@ -1,15 +1,15 @@
 **GameGauge**
 
 A command-line tool designed to help gamers make informed purchase decisions.
-It aggregates data from multiple sources, providing key information about games such as playtime, user scores, and reviews, all in one convenient interface.
+It aggregates data from multiple sources, providing key information about games such as playtime, user scores, and reviews, all in one convenient interface in the terminal.
 
 ### About GameGauge
 
-GameGauge was born out of a simple need: to make informed gaming purchase decisions quickly and efficiently. As a gamer myself, I often found the process of researching games time-consuming and scattered across multiple websites. I created GameGauge to consolidate this information into a single, easy-to-use command-line tool.
+I made GameGauge because I was sick of wasting time jumping between websites just to figure out if a game was worth buying. 
 
-My design philosophy is centered around enabling the fastest decision-making process possible. I believe that by presenting the most crucial information upfront - playtime, user scores, and recent reviews - gamers can quickly gauge whether a game aligns with their preferences and available time.
+It's a simple command-line tool that grabs all the important stuff - how long the game is, what people think of it, and some recent reviews. The idea is to help you decide if a game's worth your time and money, fast.
 
-This release (v1.0) is just the beginning. I have plans to expand and refine GameGauge.
+This is just version 1.0, so it's pretty basic right now. But I've got ideas to make it even better. If you've got suggestions, I'm all ears!
 
 ### Features
 
@@ -97,7 +97,7 @@ chmod +x main.py
 
 You can now run GameGauge by executing:
 ```bash
-./main.py
+python3 main.py "game_name"
 ```
 
 **Important Notes**
@@ -105,19 +105,12 @@ You can now run GameGauge by executing:
 * These instructions assume a Unix-like system (Linux, macOS). For Windows users, the process might be slightly different.
 * If you encounter any issues, please ensure you have the latest version of Python and pip installed, and that you have the necessary permissions to install packages and move files.
 
-
-### Troubleshooting
-
-If you encounter any issues during installation, please check that you have Python 3 installed on your system. You may need to install additional dependencies manually depending on your system configuration.
-
-Remember, while I've tried to make this script as universal as possible, it may not work perfectly on all systems. If you encounter any problems, please open an issue on the GitHub repository, and I'll do my best to help.
-
 ### Usage
 
-After installation, you can use GameGauge by typing `gamegauge` followed by a game name:
+After installation, you can run:
 
 ```bash
-gamegauge "Elden Ring"
+python 3 main.py "Elden Ring"
 ```
 
 Follow the on-screen prompts to navigate through the application.
