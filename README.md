@@ -55,25 +55,45 @@ Clone the GameGauge repository using:
 git clone https://github.com/korbal/gamegauge.git
 ```
 
-### 4. Navigate and Install Dependencies
+### 4. Navigate and Install Virtual Env
 
 Navigate to the GameGauge directory:
 ```bash
 cd gamegauge
 ```
+
+If you're unsure if `venv` is installed, run:
+```bash
+python3 -m venv --help
+```
+If you see an error, install `python3-venv` using your system's package manager.
+
+Create a virtual environment in the current directory using:
+```bash
+python3 -m venv .venv
+```
+
+Activate the virtual environment using:
+```bash
+source .venv/bin/activate
+```
+**Note:** On Windows, you may need to use `.\.venv\Scripts\activate` instead.
+
+### 5. Install Dependencies
+
 Then, install the required dependencies using:
 ```bash
 pip3 install -r requirements.txt
 ```
 
-### 5. Make Main Script Executable
+### 6. Make Main Script Executable
 
 Make the main script executable with:
 ```bash
 chmod +x main.py
 ```
 
-### 6. Run GameGauge (Optional)
+### 7. Run GameGauge 
 
 You can now run GameGauge by executing:
 ```bash
