@@ -24,50 +24,80 @@ This release (v1.0) is just the beginning. I have plans to expand and refine Gam
 ![image](https://github.com/user-attachments/assets/88ac6abd-78d5-4b3d-a7c9-e4578086b87e)
 
 
-
 ### Installation
 
+### 1. Ensure Python 3.7 or Higher is Installed
 
-
-I've created a one-stop installation script for GameGauge, but I strongly encourage you to review the script before running it.
-
-### Safe Installation Steps
-
-To ensure a safe and successful installation, please follow these steps:
-
-#### 1. Download the Script
+Make sure you have Python 3.7 or higher installed on your system. You can check your Python version by running:
 ```bash
-curl -O https://raw.githubusercontent.com/korbal/gamegauge/master/install.sh
+python3 --version
 ```
 
-#### 2. Review the Script's Contents
+### 2. Install Pip (If Necessary)
+
+If pip isn't already installed, install it using the following command:
+
+**Debian/Ubuntu-based Systems:**
 ```bash
-cat install.sh
+sudo apt-get install python3-pip
 ```
-Take a moment to read through the script and understand what it will do on your system.
-
-#### 3. Make the Script Executable
+**Fedora-based Systems:**
 ```bash
-chmod +x install.sh
+sudo dnf install python3-pip
 ```
 
-#### 4. Run the Installation Script
+Adjust according to your package manager.
+
+### 3. Clone the GameGauge Repository
+
+Clone the GameGauge repository using:
 ```bash
-./install.sh
+git clone https://github.com/korbal/gamegauge.git
 ```
-This script will:
 
-* Detect your package manager and shell
-* Install necessary dependencies (python3-venv and pip3 if not present)
-* Create a virtual environment
-* Install GameGauge and its dependencies
-* Make the 'gamegauge' command globally accessible
+### 4. Navigate and Install Dependencies
 
-If the script runs successfully, you should be able to start GameGauge by typing:
+Navigate to the GameGauge directory:
+```bash
+cd gamegauge
+```
+Then, install the required dependencies using:
+```bash
+pip3 install -r requirements.txt
+```
 
+### 5. Make Main Script Executable
+
+Make the main script executable with:
+```bash
+chmod +x main.py
+```
+
+### 6. Run GameGauge (Optional)
+
+You can now run GameGauge by executing:
+```bash
+./main.py
+```
+
+**Optional: Adding to PATH**
+
+If you want to run GameGauge from anywhere, you can add it to your PATH:
+
+Move the script to a directory in your PATH, for example:
+```bash
+sudo mv main.py /usr/local/bin/gamegauge
+```
+Now you can run GameGauge by typing:
 ```bash
 gamegauge
 ```
+
+**Important Notes**
+
+* These instructions assume a Unix-like system (Linux, macOS). For Windows users, the process might be slightly different.
+* If you encounter any issues, please ensure you have the latest version of Python and pip installed, and that you have the necessary permissions to install packages and move files.
+
 
 ### Troubleshooting
 
