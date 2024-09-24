@@ -100,19 +100,6 @@ You can now run GameGauge by executing:
 ./main.py
 ```
 
-**Optional: Adding to PATH**
-
-If you want to run GameGauge from anywhere, you can add it to your PATH:
-
-Move the script to a directory in your PATH, for example:
-```bash
-sudo mv main.py /usr/local/bin/gamegauge
-```
-Now you can run GameGauge by typing:
-```bash
-gamegauge
-```
-
 **Important Notes**
 
 * These instructions assume a Unix-like system (Linux, macOS). For Windows users, the process might be slightly different.
