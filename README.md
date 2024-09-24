@@ -31,7 +31,7 @@ This release (v1.0) is just the beginning. I have plans to expand and refine Gam
 2. Run the following one-stop install script:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/korbal/gamegauge/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/korbal/gamegauge/master/install.sh | bash
 ```
 
 The installation script will set up a virtual environment, install all necessary dependencies, and make the 'gamegauge' command globally accessible.
