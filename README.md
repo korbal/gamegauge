@@ -124,11 +124,11 @@ Upon running GameGauge, you'll be presented with a list of search results. You c
 * Recent user reviews
 * Release date and platform availability (for performance reasons, only the first 3 most relevant games' release dates are displayed.)
 
-The interface is designed to be intuitive and easy to navigate, with clear instructions provided at each step.
+The interface is designed to be intuitive (although a bit cluttered for now), with clear instructions provided at each step.
 
 ### Feedback and Support
 
-If you encounter any issues or have suggestions for improving GameGauge, please don't hesitate to open an issue on our GitHub repository.
+If you encounter any issues or have suggestions for improving GameGauge, open an issue on the GitHub repository.
 
 ### License
 
